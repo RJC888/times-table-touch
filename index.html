@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Times Table Touch - Kinesthetic Math Learning</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --success: #95E1D3;
+            --purple: #AA96DA;
+            --orange: #FCBF49;
+            --blue: #4CC9F0;
+            --dark: #2D3047;
+            --light: #F8F9FA;
+            --square-size: 62px;
+            --column-gap: 52px;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            padding: 18px;
+            min-height: 400px;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 12px 15px;
+            text-align: center;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .header h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.6em;
+            margin-bottom: 3px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 0.85em;
+            opacity: 0.95;
+        }
+
+        /* Authentication Screen */
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .auth-container h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: var(--dark);
+            font-size: 1.7em;
+            margin-bottom: 15px;
+        }
+
+        .auth-form {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            font-size: 0.95em;
+            font-family: 'Quicksand', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .pricing-box {
+            background: linear-gradient(135deg, var(--accent), var(--orange));
+            padding: 20px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 3px dashed white;
+        }
+
+        .pricing-box h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        .pricing-box ul {
+            list-style: none;
+            margin: 12px 0;
+        }
+
+        .pricing-box li {
+            padding: 5px 0;
+            font-size: 0.95em;
+        }
+
+        .pricing-box li:before {
+            content: "✓ ";
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            font-size: 1.2em;
+            font-family: 'Fredoka', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            margin: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), var(--secondary));
+        }
+
+        /* Welcome Screen */
+        .welcome-content {
+            text-align: center;
+        }
+
+        .welcome-content h2 {
+            font-family: 'Fredoka', sans-serif;
+            color: var(--dark);
+            font-size: 1.4em;
+            margin-bottom: 12px;
+        }
+
+        .instruction-box {
+            background: linear-gradient(135deg, #FFE5E5, #FFF9E5);
+            padding: 12px;
+            border-radius: 12px;
+            margin: 12px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .instruction-box h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.15em;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+
+        .instruction-box p, .instruction-box ul {
+            font-size: 0.9em;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .instruction-box ul {
+            margin-left: 18px;
+            margin-top: 8px;
+        }
+
+        .hand-demo {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+        }
+
+        .hand-item {
+            flex: 1;
+            text-align: center;
+            padding: 6px;
+        }
+
+        .hand-icon {
+            font-size: 2em;
+            margin-bottom: 4px;
+            animation: wave 2s infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        .hand-item h4 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.85em;
+            margin: 4px 0;
+        }
+
+        /* Times Table Selection */
+        .selection-screen {
+            text-align: center;
+        }
+
+        .selection-screen h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5em;
+            color: var(--dark);
+            margin-bottom: 18px;
+        }
+
+        .table-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .table-btn {
+            width: 75px;
+            height: 75px;
+            font-size: 1.6em;
+            font-family: 'Fredoka', sans-serif;
+            border: 3px solid var(--secondary);
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .table-btn:hover {
+            transform: scale(1.1);
+            background: var(--accent);
+            border-color: var(--primary);
+        }
+
+        .table-btn.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--dark);
+            transform: scale(1.15);
+        }
+
+        .timer-settings {
+            text-align: center;
+        }
+
+        .timer-settings h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .timer-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .timer-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            border: 3px solid var(--secondary);
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .timer-btn.selected {
+            background: var(--secondary);
+            color: white;
+        }
+
+        /* Assessment Screen */
+        .assessment-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .assessment-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .assessment-header h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5em;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .question-counter {
+            font-size: 1.1em;
+            color: var(--purple);
+            font-weight: 600;
+        }
+
+        .timer-display {
+            font-size: 2.1em;
+            font-family: 'Fredoka', sans-serif;
+            color: var(--primary);
+            margin: 12px 0;
+            font-weight: 700;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, var(--accent), var(--orange));
+            padding: 28px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 15px 0;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .question-text {
+            font-size: 2.6em;
+            font-family: 'Fredoka', sans-serif;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+
+        .answer-input {
+            width: 160px;
+            padding: 16px;
+            font-size: 2em;
+            font-family: 'Fredoka', sans-serif;
+            border: 4px solid white;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Training Screen */
+        .training-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .training-header {
+            text-align: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .training-header h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.4em;
+            color: var(--dark);
+        }
+
+        .hand-instructions {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 10px;
+            background: var(--light);
+            padding: 8px;
+            border-radius: 10px;
+        }
+
+        .hand-instruction {
+            text-align: center;
+            flex: 1;
+        }
+
+        .hand-instruction .emoji {
+            font-size: 1.8em;
+        }
+
+        .hand-instruction p {
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .columns-container {
+            display: flex;
+            gap: var(--column-gap);
+            justify-content: center;
+            align-items: flex-start;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 5px;
+        }
+
+        .column.left {
+            align-items: flex-end;
+        }
+
+        .column.right {
+            align-items: flex-start;
+        }
+
+        .touch-square {
+            width: var(--square-size);
+            height: var(--square-size);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: calc(var(--square-size) * 0.38);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            user-select: none;
+        }
+
+        .touch-square.left {
+            background: linear-gradient(135deg, var(--primary), #FF8787);
+            color: white;
+        }
+
+        .touch-square.right {
+            background: linear-gradient(135deg, var(--secondary), #6EDDD5);
+            color: white;
+        }
+
+        .touch-square:hover {
+            transform: scale(1.1);
+        }
+
+        .touch-square.active {
+            animation: pulse 0.5s ease;
+            box-shadow: 0 0 30px currentColor;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .touch-square.completed {
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+
+        .control-buttons {
+            text-align: center;
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .control-buttons .btn {
+            margin: 0;
+        }
+
+        .progress-indicator {
+            text-align: center;
+            font-size: 1.05em;
+            margin: 12px 0;
+            font-weight: 600;
+            color: var(--purple);
+        }
+
+        .encouragement {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3em;
+            font-family: 'Fredoka', sans-serif;
+            color: var(--primary);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            pointer-events: none;
+            z-index: 1000;
+            animation: celebrate 2s ease forwards;
+        }
+
+        @keyframes celebrate {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2) rotate(5deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0) rotate(10deg); opacity: 0; }
+        }
+
+        /* Results Screen */
+        .results-container {
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .results-container h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.9em;
+            color: var(--dark);
+            margin-bottom: 25px;
+        }
+
+        .score-comparison {
+            display: flex;
+            justify-content: space-around;
+            margin: 25px 0;
+        }
+
+        .score-box {
+            flex: 1;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 0 10px;
+        }
+
+        .score-box.before {
+            background: linear-gradient(135deg, #FFE5E5, #FFDEDE);
+            border: 3px solid var(--primary);
+        }
+
+        .score-box.after {
+            background: linear-gradient(135deg, #E5F9F5, #D5F5EE);
+            border: 3px solid var(--success);
+        }
+
+        .score-box h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 3em;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .improvement-badge {
+            background: linear-gradient(135deg, var(--accent), var(--orange));
+            padding: 20px;
+            border-radius: 18px;
+            margin: 20px 0;
+            border: 4px solid white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .improvement-badge h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.5em;
+            margin-bottom: 6px;
+        }
+
+        .improvement-value {
+            font-size: 2.6em;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .celebration-message {
+            font-size: 1.3em;
+            margin: 20px 0;
+            font-weight: 600;
+            color: var(--purple);
+        }
+
+        /* Resize Handle */
+        .resize-handle {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(240, 240, 255, 0.98));
+            border: 2px solid var(--secondary);
+            border-radius: 50%;
+            cursor: move;
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            user-select: none;
+            z-index: 100;
+            transition: all 0.2s ease;
+            touch-action: none;
+        }
+
+        .resize-handle:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            border-color: var(--primary);
+        }
+
+        .resize-handle:active {
+            transform: translateX(-50%) scale(1.02);
+            cursor: grabbing;
+        }
+
+        .resize-handle-icon {
+            font-size: 26px;
+            line-height: 1;
+            color: var(--secondary);
+        }
+
+        .resize-values {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 7px;
+            font-size: 0.8em;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .resize-handle.dragging .resize-values {
+            opacity: 1;
+        }
+
+        .resize-hint {
+            position: absolute;
+            top: -65px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: var(--dark);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 600;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            animation: fadeIn 0.5s ease;
+            pointer-events: none;
+        }
+
+        /* Times Table Dropdown */
+        #tableDropdown:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #tableDropdown:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Mute Button */
+        #muteBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #muteBtn:active {
+            transform: scale(0.98);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .columns-container {
+                gap: 30px;
+            }
+            
+            .touch-square {
+                width: 55px;
+                height: 55px;
+                font-size: 1.6em;
+            }
+
+            .question-text {
+                font-size: 2em;
+            }
+
+            .answer-input {
+                width: 130px;
+                font-size: 1.6em;
+            }
+            
+            .training-header h2 {
+                font-size: 1.1em;
+            }
+            
+            #tableDropdown {
+                font-size: 0.85em !important;
+                padding: 6px 10px !important;
+            }
+            
+            #muteBtn {
+                font-size: 0.75em !important;
+                padding: 6px 10px !important;
+            }
+            
+            .table-btn {
+                width: 65px;
+                height: 65px;
+                font-size: 1.4em;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>✋ Times Table Touch ✋</h1>
+            <p>Kinesthetic Learning for Multiplication Mastery</p>
+        </div>
+
+        <!-- Authentication Screen -->
+        <div id="authScreen" class="screen active">
+            <div class="auth-container">
+                <h2>Welcome Teachers! 👋</h2>
+                <div class="pricing-box">
+                    <h3>🎯 Subscription Plans</h3>
+                    <ul>
+                        <li>14-Day Free Trial - No Credit Card Required</li>
+                        <li>Individual Teacher: $9.99/year</li>
+                        <li>School-Wide License: $99.00/year</li>
+                        <li>Unlimited Students & Progress Tracking</li>
+                    </ul>
+                </div>
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label>Teacher Name</label>
+                        <input type="text" id="teacherName" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label>School Email</label>
+                        <input type="email" id="teacherEmail" placeholder="teacher@school.edu">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="teacherPassword" placeholder="Create a password">
+                    </div>
+                    <button class="btn" onclick="login()">Start Free Trial 🚀</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome/Instructions Screen -->
+        <div id="welcomeScreen" class="screen">
+            <div class="welcome-content">
+                <h2>🧠 How Times Table Touch Works</h2>
+                
+                <div class="instruction-box">
+                    <h3>The Science Behind It</h3>
+                    <p>Times Table Touch uses <strong>kinesthetic learning</strong> and <strong>cross-brain coordination</strong> to help students memorize multiplication facts faster and more effectively.</p>
+                    <ul>
+                        <li><strong>Left Brain & Right Hand:</strong> Students use their RIGHT hand to touch the LEFT column</li>
+                        <li><strong>Right Brain & Left Hand:</strong> Students use their LEFT hand to touch the RIGHT column</li>
+                        <li><strong>Multi-Sensory Learning:</strong> Touch + Visual + Auditory = Better Retention</li>
+                    </ul>
+                </div>
+
+                <div class="hand-demo">
+                    <div class="hand-item">
+                        <div class="hand-icon">👉</div>
+                        <h4>Right Hand</h4>
+                        <p style="color: var(--primary); font-weight: bold;">Touches LEFT Column</p>
+                    </div>
+                    <div class="hand-item">
+                        <div class="hand-icon" style="transform: scaleX(-1);">👉</div>
+                        <h4>Left Hand</h4>
+                        <p style="color: var(--secondary); font-weight: bold;">Touches RIGHT Column</p>
+                    </div>
+                </div>
+
+                <div class="instruction-box">
+                    <h3>Classroom Implementation</h3>
+                    <ul>
+                        <li>Groups of 3-4 students work best</li>
+                        <li>Each student gets 2-3 turns (about 5 minutes total)</li>
+                        <li>Students recite each number OUT LOUD as they touch it</li>
+                        <li>Start from the bottom and work upward</li>
+                        <li>Complete the "Keep Going" challenges for extra practice</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <button class="btn" onclick="showScreen('selectionScreen')">Let's Get Started! 🎉</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Times Table Selection Screen -->
+        <div id="selectionScreen" class="screen">
+            <div class="selection-screen">
+                <h2>Select a Times Table to Practice</h2>
+                
+                <div class="table-selector">
+                    <button class="table-btn" onclick="selectTable(2)">2×</button>
+                    <button class="table-btn" onclick="selectTable(3)">3×</button>
+                    <button class="table-btn" onclick="selectTable(4)">4×</button>
+                    <button class="table-btn" onclick="selectTable(5)">5×</button>
+                    <button class="table-btn" onclick="selectTable(6)">6×</button>
+                    <button class="table-btn" onclick="selectTable(7)">7×</button>
+                    <button class="table-btn" onclick="selectTable(8)">8×</button>
+                    <button class="table-btn" onclick="selectTable(9)">9×</button>
+                    <button class="table-btn" onclick="selectTable(10)">10×</button>
+                    <button class="table-btn" onclick="selectTable(11)">11×</button>
+                    <button class="table-btn" onclick="selectTable(12)">12×</button>
+                </div>
+
+                <!-- Assessment Configuration Box -->
+                <div style="background: #F0F0F0; padding: 15px; border-radius: 20px; margin: 15px auto; max-width: 650px; box-shadow: 0 3px 15px rgba(0,0,0,0.08);">
+                    <!-- Timer and Skip in horizontal layout -->
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 12px;">
+                        <!-- Timer Section (60% of original size) -->
+                        <div style="background: white; padding: 10px 14px; border-radius: 14px; flex: 1; min-width: 240px;">
+                            <h3 style="font-family: 'Fredoka', sans-serif; font-size: 0.95em; margin-bottom: 8px; text-align: center; color: var(--dark);">⏱️ Timer Per Question</h3>
+                            <div class="timer-options" style="gap: 8px;">
+                                <button class="timer-btn" onclick="selectTimer(15)" style="padding: 7px 15px; font-size: 0.9em;">15s</button>
+                                <button class="timer-btn" onclick="selectTimer(30)" style="padding: 7px 15px; font-size: 0.9em;">30s</button>
+                                <button class="timer-btn selected" onclick="selectTimer(60)" style="padding: 7px 15px; font-size: 0.9em;">60s</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Skip Assessment Option -->
+                        <div style="text-align: center;">
+                            <p style="color: var(--purple); font-size: 0.85em; margin-bottom: 6px; font-weight: 600;">or skip:</p>
+                            <button class="btn btn-secondary" onclick="skipToTrainingFromSelection()" style="font-size: 0.95em; padding: 9px 24px;">Skip to Practice →</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Begin Assessment Button -->
+                    <div style="text-align: center;">
+                        <button class="btn" onclick="startAssessment('before')" style="font-size: 1.1em; padding: 12px 40px;">Begin with Assessment 📝</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessment Screen -->
+        <div id="assessmentScreen" class="screen">
+            <div class="assessment-container">
+                <div class="assessment-header">
+                    <h2 id="assessmentTitle">Beginning Assessment</h2>
+                    <div class="question-counter">Question <span id="questionNum">1</span> of 10</div>
+                    <div class="timer-display" id="timerDisplay">60</div>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-text" id="questionText">2 × 5 = ?</div>
+                    <input type="number" class="answer-input" id="answerInput" placeholder="?" autofocus>
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="btn" onclick="submitAnswer()">Submit Answer ✓</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Screen -->
+        <div id="trainingScreen" class="screen">
+            <div class="training-container">
+                <div class="training-header">
+                    <!-- Compact Header Line: Dropdown LEFT, Title CENTER, Mute RIGHT -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <!-- LEFT: Switch Table Dropdown -->
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label style="font-weight: 600; color: var(--dark); font-size: 0.9em;">Switch:</label>
+                            <select id="tableDropdown" onchange="switchTimesTable(this.value)" 
+                                    style="padding: 7px 12px; font-size: 0.95em; 
+                                           font-family: 'Fredoka', sans-serif; font-weight: 600; 
+                                           border: 2px solid var(--secondary); border-radius: 12px; 
+                                           background: white; cursor: pointer; color: var(--dark);
+                                           box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s;">
+                                <option value="2">2×</option>
+                                <option value="3">3×</option>
+                                <option value="4">4×</option>
+                                <option value="5">5×</option>
+                                <option value="6">6×</option>
+                                <option value="7">7×</option>
+                                <option value="8">8×</option>
+                                <option value="9">9×</option>
+                                <option value="10">10×</option>
+                                <option value="11">11×</option>
+                                <option value="12">12×</option>
+                            </select>
+                        </div>
+                        
+                        <!-- CENTER: Title -->
+                        <h2 style="margin: 0; font-size: 1.3em; font-family: 'Fredoka', sans-serif;">Practice Time! <span id="trainingTableNum">2</span>×</h2>
+                        
+                        <!-- RIGHT: Mute Button (smaller) -->
+                        <button id="muteBtn" onclick="toggleAudio()" 
+                                style="padding: 7px 14px; font-size: 0.85em; font-family: 'Quicksand', sans-serif; 
+                                       font-weight: 600; border: 2px solid var(--purple); border-radius: 12px; 
+                                       background: white; cursor: pointer; color: var(--dark); 
+                                       box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s;">
+                            🔊 Mute
+                        </button>
+                    </div>
+                    
+                    <!-- Instructions directly below -->
+                    <div class="progress-indicator" id="progressText" style="margin: 8px 0;">Touch the squares from bottom to top! Start at the bottom! 👇</div>
+                    <div style="text-align: center; margin-top: 5px; color: var(--purple); font-size: 0.8em; font-weight: 600;">
+                        💡 Drag ⊕ UP=Bigger, DOWN=Smaller, LEFT=Closer, RIGHT=Further Apart
+                    </div>
+                </div>
+
+                <div class="hand-instructions">
+                    <div class="hand-instruction">
+                        <div class="emoji">👉</div>
+                        <p style="color: var(--primary);">RIGHT HAND → LEFT COLUMN</p>
+                    </div>
+                    <div class="hand-instruction">
+                        <div class="emoji" style="transform: scaleX(-1);">👉</div>
+                        <p style="color: var(--secondary);">LEFT HAND → RIGHT COLUMN</p>
+                    </div>
+                </div>
+
+                <div class="columns-container" id="columnsContainer">
+                    <div class="resize-handle" id="resizeHandle">
+                        <div class="resize-handle-icon">⊕</div>
+                        <div class="resize-values" id="resizeValues">
+                            <span id="sizeValue">90px</span> | <span id="gapValue">80px</span>
+                        </div>
+                    </div>
+                    <div class="column left" id="leftColumn"></div>
+                    <div class="column right" id="rightColumn"></div>
+                </div>
+
+                <div class="control-buttons" id="trainingControlButtons">
+                    <button class="btn btn-secondary" id="keepGoingBtn" onclick="keepGoing()" style="display: none;">Keep Going! 🚀</button>
+                    <button class="btn" id="repeatTableBtn" onclick="repeatThisTable()" style="background: linear-gradient(135deg, var(--orange), var(--accent)); display: none;">Repeat This Table 🔄</button>
+                    <button class="btn btn-success" id="finishQuizBtn" onclick="startAssessment('after')" style="display: none;">Finish & Take Final Quiz 📝</button>
+                    <button class="btn btn-success" id="takeAssessmentBtn" onclick="takeAssessmentNow()" style="display: none;">Take Assessment Now 📝</button>
+                    <button class="btn" id="exitTrainingBtn" onclick="exitTraining()" style="background: linear-gradient(135deg, #6c757d, #495057);">Exit Training 🚪</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="screen">
+            <div class="results-container">
+                <h2>🎉 Fantastic Work! 🎉</h2>
+
+                <div class="score-comparison">
+                    <div class="score-box before">
+                        <h3>Before Training</h3>
+                        <div class="score-value"><span id="beforeScore">0</span>/10</div>
+                    </div>
+                    <div class="score-box after">
+                        <h3>After Training</h3>
+                        <div class="score-value"><span id="afterScore">0</span>/10</div>
+                    </div>
+                </div>
+
+                <div class="improvement-badge">
+                    <h3>Improvement</h3>
+                    <div class="improvement-value" id="improvementPercent">+0%</div>
+                </div>
+
+                <div class="celebration-message" id="celebrationMessage">
+                    Keep up the great work! 🌟
+                </div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <button class="btn" onclick="showScreen('selectionScreen')">Practice Another Table</button>
+                    <button class="btn btn-secondary" onclick="repeatTable()">Practice Same Table Again</button>
+                    <button class="btn" style="background: linear-gradient(135deg, #6c757d, #495057);" onclick="exitApp()">Exit Program 🚪</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let state = {
+            teacher: null,
+            selectedTable: 2,
+            timerSeconds: 60,
+            currentQuestion: 1,
+            correctAnswers: 0,
+            assessmentType: 'before',
+            beforeScore: 0,
+            afterScore: 0,
+            currentLevel: 0,
+            timerInterval: null,
+            touchedSquares: [],
+            squareSize: 62,
+            columnSpacing: 52,
+            isDragging: false,
+            dragStartX: 0,
+            dragStartY: 0,
+            startSquareSize: 62,
+            startColumnSpacing: 52,
+            tookBeginningAssessment: false,
+            audioMuted: false,
+            quizMultipliers: [],
+            encouragements: [
+                "Awesome! 🌟",
+                "Great Job! 💪",
+                "Fantastic! 🎉",
+                "Super Star! ⭐",
+                "Amazing! 🚀",
+                "Brilliant! 💫",
+                "Outstanding! 🏆",
+                "Incredible! 🎯"
+            ]
+        };
+
+        // Resize Handle Functionality
+        function initResizeHandle() {
+            const handle = document.getElementById('resizeHandle');
+            if (!handle) return;
+
+            // Mouse events
+            handle.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+
+            // Touch events
+            handle.addEventListener('touchstart', startDrag);
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', endDrag);
+        }
+
+        function startDrag(e) {
+            e.preventDefault();
+            state.isDragging = true;
+            
+            const handle = document.getElementById('resizeHandle');
+            handle.classList.add('dragging');
+            
+            // Get initial position
+            if (e.type === 'touchstart') {
+                state.dragStartX = e.touches[0].clientX;
+                state.dragStartY = e.touches[0].clientY;
+            } else {
+                state.dragStartX = e.clientX;
+                state.dragStartY = e.clientY;
+            }
+            
+            state.startSquareSize = state.squareSize;
+            state.startColumnSpacing = state.columnSpacing;
+        }
+
+        function drag(e) {
+            if (!state.isDragging) return;
+            e.preventDefault();
+            
+            let clientX, clientY;
+            if (e.type === 'touchmove') {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            // Calculate deltas
+            const deltaX = clientX - state.dragStartX;
+            const deltaY = clientY - state.dragStartY;
+            
+            // Update square size (vertical movement)
+            // Up = bigger, Down = smaller (flipped for intuitive control)
+            const newSize = state.startSquareSize - (deltaY * 0.5);
+            state.squareSize = Math.max(60, Math.min(130, newSize));
+            
+            // Update column spacing (horizontal movement)
+            // Right = further apart, Left = closer
+            const newSpacing = state.startColumnSpacing + (deltaX * 0.8);
+            state.columnSpacing = Math.max(40, Math.min(300, newSpacing));
+            
+            // Apply changes
+            updateSizing();
+            updateValueDisplay();
+        }
+
+        function endDrag(e) {
+            if (!state.isDragging) return;
+            
+            state.isDragging = false;
+            const handle = document.getElementById('resizeHandle');
+            handle.classList.remove('dragging');
+            
+            // Save to localStorage
+            localStorage.setItem('squareSize', state.squareSize);
+            localStorage.setItem('columnSpacing', state.columnSpacing);
+        }
+
+        function updateSizing() {
+            document.documentElement.style.setProperty('--square-size', state.squareSize + 'px');
+            document.documentElement.style.setProperty('--column-gap', state.columnSpacing + 'px');
+        }
+
+        function updateValueDisplay() {
+            document.getElementById('sizeValue').textContent = Math.round(state.squareSize) + 'px';
+            document.getElementById('gapValue').textContent = Math.round(state.columnSpacing) + 'px';
+        }
+
+        function loadSavedSizing() {
+            const savedSize = localStorage.getItem('squareSize');
+            const savedSpacing = localStorage.getItem('columnSpacing');
+            
+            if (savedSize) {
+                state.squareSize = parseFloat(savedSize);
+            }
+            if (savedSpacing) {
+                state.columnSpacing = parseFloat(savedSpacing);
+            }
+            
+            updateSizing();
+            updateValueDisplay();
+        }
+
+        // Authentication
+        function login() {
+            const name = document.getElementById('teacherName').value;
+            const email = document.getElementById('teacherEmail').value;
+            const password = document.getElementById('teacherPassword').value;
+
+            if (name && email && password) {
+                state.teacher = { name, email };
+                localStorage.setItem('teacher', JSON.stringify(state.teacher));
+                showScreen('welcomeScreen');
+            } else {
+                alert('Please fill in all fields');
+            }
+        }
+
+        // Screen Navigation
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Table Selection
+        function selectTable(num) {
+            state.selectedTable = num;
+            document.querySelectorAll('.table-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        function selectTimer(seconds) {
+            state.timerSeconds = seconds;
+            document.querySelectorAll('.timer-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        // Assessment
+        function startAssessment(type) {
+            state.assessmentType = type;
+            state.currentQuestion = 1;
+            state.correctAnswers = 0;
+            
+            // Generate shuffled array of unique multipliers (1-10) for this quiz
+            state.quizMultipliers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            // Shuffle using Fisher-Yates algorithm
+            for (let i = state.quizMultipliers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [state.quizMultipliers[i], state.quizMultipliers[j]] = [state.quizMultipliers[j], state.quizMultipliers[i]];
+            }
+            
+            // Track if they're taking the beginning assessment
+            if (type === 'before') {
+                state.tookBeginningAssessment = true;
+            }
+            
+            if (type === 'before') {
+                document.getElementById('assessmentTitle').textContent = 'Beginning Assessment';
+            } else {
+                document.getElementById('assessmentTitle').textContent = 'Final Assessment';
+            }
+            
+            showScreen('assessmentScreen');
+            loadQuestion();
+            startTimer();
+        }
+
+        function loadQuestion() {
+            if (state.currentQuestion > 10) {
+                finishAssessment();
+                return;
+            }
+
+            // Use the pre-shuffled multiplier for this question (no repeats!)
+            const multiplier = state.quizMultipliers[state.currentQuestion - 1];
+            const answer = state.selectedTable * multiplier;
+            
+            document.getElementById('questionNum').textContent = state.currentQuestion;
+            document.getElementById('questionText').textContent = `${state.selectedTable} × ${multiplier} = ?`;
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').dataset.correctAnswer = answer;
+            document.getElementById('answerInput').focus();
+            
+            resetTimer();
+        }
+
+        function startTimer() {
+            clearInterval(state.timerInterval);
+            let timeLeft = state.timerSeconds;
+            document.getElementById('timerDisplay').textContent = timeLeft;
+            
+            state.timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timerDisplay').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    submitAnswer();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(state.timerInterval);
+            startTimer();
+        }
+
+        function submitAnswer() {
+            const input = document.getElementById('answerInput');
+            const userAnswer = parseInt(input.value);
+            const correctAnswer = parseInt(input.dataset.correctAnswer);
+            
+            if (userAnswer === correctAnswer) {
+                state.correctAnswers++;
+                playSound('correct');
+            } else {
+                playSound('wrong');
+            }
+            
+            state.currentQuestion++;
+            setTimeout(() => loadQuestion(), 500);
+        }
+
+        function finishAssessment() {
+            clearInterval(state.timerInterval);
+            
+            if (state.assessmentType === 'before') {
+                state.beforeScore = state.correctAnswers;
+                initTraining();
+                showScreen('trainingScreen');
+            } else {
+                state.afterScore = state.correctAnswers;
+                showResults();
+            }
+        }
+
+        function skipToTraining() {
+            clearInterval(state.timerInterval);
+            
+            // Set before score as "skipped" marker
+            state.beforeScore = -1; // -1 indicates skipped assessment
+            
+            // Go directly to training
+            initTraining();
+            showScreen('trainingScreen');
+        }
+
+        function skipToTrainingFromSelection() {
+            // User chose to skip assessment from selection screen
+            state.tookBeginningAssessment = false;
+            state.beforeScore = -1;
+            
+            // Go directly to training
+            initTraining();
+            showScreen('trainingScreen');
+        }
+
+        function switchTimesTable(newTable) {
+            // Switch to a different times table while in training
+            state.selectedTable = parseInt(newTable);
+            state.currentLevel = 0;
+            state.touchedSquares = [];
+            
+            // Update header display
+            document.getElementById('trainingTableNum').textContent = state.selectedTable;
+            
+            // Update dropdown to match
+            document.getElementById('tableDropdown').value = state.selectedTable;
+            
+            // Hide Keep Going and Repeat buttons when switching tables
+            document.getElementById('keepGoingBtn').style.display = 'none';
+            document.getElementById('repeatTableBtn').style.display = 'none';
+            document.getElementById('progressText').textContent = 'Touch the squares from bottom to top!';
+            
+            // Re-render columns with new table
+            renderColumns();
+        }
+
+        function takeAssessmentNow() {
+            // User wants to take assessment from training screen
+            startAssessment('before');
+        }
+
+        function exitTraining() {
+            // Smart exit based on what path the user took
+            if (state.tookBeginningAssessment) {
+                // They took beginning assessment, show partial results
+                state.afterScore = -1; // Mark as no final assessment
+                showResults();
+            } else {
+                // They skipped assessment entirely, just go back to selection
+                showScreen('selectionScreen');
+            }
+        }
+
+        function updateTrainingButtons() {
+            // Show/hide buttons based on whether user took beginning assessment
+            const finishQuizBtn = document.getElementById('finishQuizBtn');
+            const takeAssessmentBtn = document.getElementById('takeAssessmentBtn');
+            
+            if (state.tookBeginningAssessment) {
+                // Show "Finish & Take Final Quiz"
+                finishQuizBtn.style.display = 'inline-block';
+                takeAssessmentBtn.style.display = 'none';
+            } else {
+                // Show "Take Assessment Now"
+                finishQuizBtn.style.display = 'none';
+                takeAssessmentBtn.style.display = 'inline-block';
+            }
+        }
+
+        function toggleAudio() {
+            state.audioMuted = !state.audioMuted;
+            const btn = document.getElementById('muteBtn');
+            
+            if (state.audioMuted) {
+                btn.innerHTML = '🔇 Unmute';
+                btn.style.background = 'linear-gradient(135deg, #FFE5E5, #FFD5D5)';
+                btn.style.borderColor = '#FF6B6B';
+            } else {
+                btn.innerHTML = '🔊 Mute';
+                btn.style.background = 'white';
+                btn.style.borderColor = '#AA96DA';
+            }
+            
+            // Save preference
+            localStorage.setItem('audioMuted', state.audioMuted);
+        }
+
+        // Training Mode
+        function initTraining() {
+            state.currentLevel = 0;
+            state.touchedSquares = [];
+            document.getElementById('trainingTableNum').textContent = state.selectedTable;
+            
+            // Set dropdown to match selected table
+            document.getElementById('tableDropdown').value = state.selectedTable;
+            
+            // Load saved audio preference
+            const savedAudioMuted = localStorage.getItem('audioMuted');
+            if (savedAudioMuted === 'true') {
+                state.audioMuted = true;
+                const btn = document.getElementById('muteBtn');
+                btn.innerHTML = '🔇 Unmute';
+                btn.style.background = 'linear-gradient(135deg, #FFE5E5, #FFD5D5)';
+                btn.style.borderColor = '#FF6B6B';
+            }
+            
+            // Hide Keep Going and Repeat buttons at start
+            document.getElementById('keepGoingBtn').style.display = 'none';
+            document.getElementById('repeatTableBtn').style.display = 'none';
+            
+            loadSavedSizing();
+            renderColumns();
+            initResizeHandle();
+            updateTrainingButtons();
+        }
+
+        function renderColumns() {
+            const leftCol = document.getElementById('leftColumn');
+            const rightCol = document.getElementById('rightColumn');
+            leftCol.innerHTML = '';
+            rightCol.innerHTML = '';
+            
+            // Calculate starting multiplier based on current level
+            // Level 0: multipliers 1-10, Level 1: multipliers 11-20, etc.
+            const startMultiplier = (state.currentLevel * 10) + 1;
+            
+            // Generate 10 multiples for this level
+            for (let i = 0; i < 10; i++) {
+                const multiplier = startMultiplier + i;
+                const number = state.selectedTable * multiplier;
+                
+                // Alternate between left and right columns
+                // Odd positions (1st, 3rd, 5th, 7th, 9th) go to LEFT column
+                // Even positions (2nd, 4th, 6th, 8th, 10th) go to RIGHT column
+                if (i % 2 === 0) {
+                    const leftSquare = createSquare(number, 'left', Math.floor(i / 2));
+                    leftCol.appendChild(leftSquare);
+                } else {
+                    const rightSquare = createSquare(number, 'right', Math.floor(i / 2));
+                    rightCol.appendChild(rightSquare);
+                }
+            }
+            
+            document.getElementById('keepGoingBtn').style.display = 'none';
+            document.getElementById('progressText').textContent = 'Touch the squares from bottom to top! Start at the bottom! 👇';
+            state.touchedSquares = [];
+        }
+
+        function createSquare(number, side, index) {
+            const square = document.createElement('div');
+            square.className = `touch-square ${side}`;
+            square.textContent = number;
+            square.dataset.index = index;
+            square.dataset.side = side;
+            
+            square.addEventListener('click', function() {
+                handleSquareTouch(this);
+            });
+            
+            return square;
+        }
+
+        function handleSquareTouch(square) {
+            const index = parseInt(square.dataset.index);
+            const side = square.dataset.side;
+            
+            square.classList.add('active');
+            playSound('touch');
+            speak(square.textContent);
+            
+            setTimeout(() => {
+                square.classList.remove('active');
+                square.classList.add('completed');
+            }, 500);
+            
+            state.touchedSquares.push({side, index});
+            
+            // Check if level completed (5 squares per column)
+            const leftTouches = state.touchedSquares.filter(t => t.side === 'left').length;
+            const rightTouches = state.touchedSquares.filter(t => t.side === 'right').length;
+            
+            if (leftTouches >= 5 && rightTouches >= 5) {
+                setTimeout(() => {
+                    celebrateCompletion();
+                }, 1000);
+            }
+        }
+
+        function celebrateCompletion() {
+            // More enthusiastic encouragement at higher levels
+            let encouragement;
+            let reward = '';
+            
+            if (state.currentLevel === 0) {
+                encouragement = state.encouragements[Math.floor(Math.random() * state.encouragements.length)];
+            } else if (state.currentLevel === 1) {
+                const level1Messages = ["Phenomenal! 🌟", "Incredible Work! 💎", "You're Unstoppable! 🚀", "Magnificent! 👑"];
+                encouragement = level1Messages[Math.floor(Math.random() * level1Messages.length)];
+                reward = '⭐';
+            } else if (state.currentLevel === 2) {
+                const level2Messages = ["EXTRAORDINARY! 🎆", "ABSOLUTELY BRILLIANT! 💫", "MATH GENIUS! 🧠", "PHENOMENAL! 🏆"];
+                encouragement = level2Messages[Math.floor(Math.random() * level2Messages.length)];
+                reward = '⭐⭐';
+            } else {
+                const level3Messages = ["LEGENDARY! 👑✨", "UNSTOPPABLE CHAMPION! 🏆🎉", "ULTIMATE MASTERY! 💪🌟", "BEYOND AMAZING! 🚀💫"];
+                encouragement = level3Messages[Math.floor(Math.random() * level3Messages.length)];
+                reward = '⭐⭐⭐';
+            }
+            
+            showEncouragement(encouragement + ' ' + reward);
+            playSound('celebrate');
+            
+            // Check if we've reached the maximum sensible level for this table
+            const maxLevel = getMaxLevel(state.selectedTable);
+            
+            if (state.currentLevel < maxLevel) {
+                document.getElementById('keepGoingBtn').style.display = 'inline-block';
+                document.getElementById('progressText').textContent = `${reward} Amazing! Ready for more? ${reward}`;
+            } else {
+                document.getElementById('progressText').textContent = `${reward} Perfect! You've mastered the ${state.selectedTable}× table! ${reward}`;
+            }
+            
+            // Always show Repeat button after completing any level
+            document.getElementById('repeatTableBtn').style.display = 'inline-block';
+        }
+        
+        function getMaxLevel(table) {
+            // Define sensible stopping points for each times table
+            // Level 0 = 1-10, Level 1 = 11-20, Level 2 = 21-30, etc.
+            if (table === 2) return 4;  // Stop at 100 (5 levels: 0-4)
+            if (table === 3) return 3;  // Stop at 120 (4 levels: 0-3)
+            if (table === 4) return 3;  // Stop at 120 (4 levels: 0-3)
+            if (table === 5) return 3;  // Stop at 150 (4 levels: 0-3)
+            if (table === 6) return 3;  // Stop at 180 (4 levels: 0-3)
+            if (table === 7) return 2;  // Stop at 140 (3 levels: 0-2)
+            if (table === 8) return 2;  // Stop at 160 (3 levels: 0-2)
+            if (table === 9) return 2;  // Stop at 180 (3 levels: 0-2)
+            if (table === 10) return 2; // Stop at 200 (3 levels: 0-2)
+            if (table === 11) return 2; // Stop at 220 (3 levels: 0-2)
+            if (table === 12) return 2; // Stop at 240 (3 levels: 0-2)
+            return 2; // Default
+        }
+
+        function showEncouragement(text) {
+            const elem = document.createElement('div');
+            elem.className = 'encouragement';
+            elem.innerHTML = text;
+            document.body.appendChild(elem);
+            
+            // Add some sparkle elements around the encouragement
+            if (state.currentLevel > 0) {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const sparkle = document.createElement('div');
+                        sparkle.style.position = 'fixed';
+                        sparkle.style.fontSize = '3em';
+                        sparkle.textContent = '✨';
+                        sparkle.style.left = (Math.random() * 80 + 10) + '%';
+                        sparkle.style.top = (Math.random() * 80 + 10) + '%';
+                        sparkle.style.pointerEvents = 'none';
+                        sparkle.style.animation = 'celebrate 1.5s ease forwards';
+                        sparkle.style.zIndex = '999';
+                        document.body.appendChild(sparkle);
+                        
+                        setTimeout(() => sparkle.remove(), 1500);
+                    }, i * 100);
+                }
+            }
+            
+            setTimeout(() => {
+                elem.remove();
+            }, 2000);
+        }
+
+        function keepGoing() {
+            const maxLevel = getMaxLevel(state.selectedTable);
+            
+            if (state.currentLevel < maxLevel) {
+                state.currentLevel++;
+                state.touchedSquares = [];
+                renderColumns();
+            } else {
+                // Already at max level
+                document.getElementById('keepGoingBtn').style.display = 'none';
+            }
+        }
+
+        function repeatThisTable() {
+            // Reset to level 0 and restart the same times table
+            state.currentLevel = 0;
+            state.touchedSquares = [];
+            document.getElementById('keepGoingBtn').style.display = 'none';
+            document.getElementById('repeatTableBtn').style.display = 'none';
+            document.getElementById('progressText').textContent = 'Touch the squares from bottom to top!';
+            renderColumns();
+            playSound('start');
+        }
+
+        // Results
+        function showResults() {
+            // Handle three scenarios: both assessments, skipped before, or exited early
+            
+            if (state.beforeScore === -1 && state.afterScore === -1) {
+                // SCENARIO 3: Practice only, no assessments at all
+                document.getElementById('beforeScore').textContent = 'N/A';
+                document.getElementById('afterScore').textContent = 'N/A';
+                document.getElementById('improvementPercent').textContent = 'N/A';
+                document.getElementById('celebrationMessage').textContent = 
+                    '🎯 Great practice session! No assessment scores recorded. Ready to try again? 📈';
+            } else if (state.beforeScore !== -1 && state.afterScore === -1) {
+                // SCENARIO: Took before assessment but exited without final
+                document.getElementById('beforeScore').textContent = state.beforeScore;
+                document.getElementById('afterScore').textContent = 'Not Taken';
+                document.getElementById('improvementPercent').textContent = 'N/A';
+                document.getElementById('celebrationMessage').textContent = 
+                    '📊 You completed the beginning assessment! Take the final quiz next time to track progress! 🌟';
+            } else if (state.beforeScore === -1) {
+                // SCENARIO 2: Skipped before assessment, took after
+                document.getElementById('beforeScore').textContent = 'Skipped';
+                document.getElementById('afterScore').textContent = state.afterScore;
+                document.getElementById('improvementPercent').textContent = 'N/A';
+                document.getElementById('celebrationMessage').textContent = 
+                    '🎯 Great practice session! Take the beginning assessment next time to track progress! 📈';
+            } else {
+                // SCENARIO 1: Took both assessments (normal flow)
+                document.getElementById('beforeScore').textContent = state.beforeScore;
+                document.getElementById('afterScore').textContent = state.afterScore;
+                
+                const improvement = state.afterScore - state.beforeScore;
+                const improvementPercent = state.beforeScore === 0 ? 
+                    (state.afterScore * 10) : 
+                    Math.round((improvement / state.beforeScore) * 100);
+                
+                document.getElementById('improvementPercent').textContent = 
+                    improvement >= 0 ? `+${improvementPercent}%` : `${improvementPercent}%`;
+                
+                let message = '';
+                if (improvement >= 3) {
+                    message = '🎉 Outstanding progress! You\'re a multiplication master! 🏆';
+                } else if (improvement >= 1) {
+                    message = '💪 Great improvement! Keep practicing! ⭐';
+                } else if (improvement === 0) {
+                    message = '👍 You maintained your score! Keep it up! 🌟';
+                } else {
+                    message = '💙 Keep practicing - you\'ll get better with time! 🌱';
+                }
+                document.getElementById('celebrationMessage').textContent = message;
+            }
+            
+            showScreen('resultsScreen');
+        }
+
+        function repeatTable() {
+            // Reset scores but keep the selected table
+            state.beforeScore = 0;
+            state.afterScore = 0;
+            state.tookBeginningAssessment = false;
+            state.currentLevel = 0;
+            state.touchedSquares = [];
+            
+            // Go back to selection screen with the same table
+            showScreen('selectionScreen');
+        }
+        
+        function exitApp() {
+            // Clear session data
+            state.teacher = null;
+            localStorage.removeItem('teacher');
+            
+            // Reset all state
+            state.selectedTable = 2;
+            state.timerSeconds = 60;
+            state.currentQuestion = 1;
+            state.correctAnswers = 0;
+            state.beforeScore = 0;
+            state.afterScore = 0;
+            state.currentLevel = 0;
+            state.touchedSquares = [];
+            state.tookBeginningAssessment = false;
+            
+            // Clear timer if running
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
+            
+            // Return to auth screen
+            showScreen('authScreen');
+            
+            // Clear form fields
+            document.getElementById('teacherName').value = '';
+            document.getElementById('teacherEmail').value = '';
+            document.getElementById('teacherPassword').value = '';
+        }
+
+        // Sound Effects (using Web Audio API)
+        function playSound(type) {
+            if (state.audioMuted) return; // Don't play if muted
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'correct') {
+                oscillator.frequency.value = 800;
+                gainNode.gain.value = 0.3;
+            } else if (type === 'wrong') {
+                oscillator.frequency.value = 200;
+                gainNode.gain.value = 0.3;
+            } else if (type === 'touch') {
+                oscillator.frequency.value = 400;
+                gainNode.gain.value = 0.1;
+            } else if (type === 'celebrate') {
+                oscillator.frequency.value = 1000;
+                gainNode.gain.value = 0.3;
+            }
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // Text-to-Speech
+        function speak(text) {
+            if (state.audioMuted) return; // Don't speak if muted
+            
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.2;
+                utterance.pitch = 1.2;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Keyboard support
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('assessmentScreen').classList.contains('active')) {
+                submitAnswer();
+            }
+        });
+
+        // Check for existing session
+        window.addEventListener('load', () => {
+            const savedTeacher = localStorage.getItem('teacher');
+            if (savedTeacher) {
+                state.teacher = JSON.parse(savedTeacher);
+                showScreen('welcomeScreen');
+            }
+            loadSavedSizing();
+        });
+    </script>
+</body>
+</html>
