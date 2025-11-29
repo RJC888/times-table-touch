@@ -742,6 +742,46 @@
             transform: scale(0.98);
         }
 
+        /* Equation Box */
+        .equation-box {
+            background: linear-gradient(135deg, var(--accent), var(--orange));
+            border: 3px solid white;
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            text-align: center;
+            min-width: 200px;
+            max-width: 220px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease-out;
+            opacity: 0.7;
+        }
+
+        .equation-box.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .equation-box h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.9em;
+            color: var(--dark);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .equation-box .equation-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .columns-container {
@@ -1011,15 +1051,22 @@
                     </div>
                 </div>
 
-                <div class="columns-container" id="columnsContainer">
-                    <div class="resize-handle" id="resizeHandle">
-                        <div class="resize-handle-icon">⊕</div>
-                        <div class="resize-values" id="resizeValues">
-                            <span id="sizeValue">90px</span> | <span id="gapValue">80px</span>
+                <div style="display: flex; gap: 40px; justify-content: center; align-items: center; margin: 20px 0;">
+                    <div class="columns-container" id="columnsContainer">
+                        <div class="resize-handle" id="resizeHandle">
+                            <div class="resize-handle-icon">⊕</div>
+                            <div class="resize-values" id="resizeValues">
+                                <span id="sizeValue">90px</span> | <span id="gapValue">80px</span>
+                            </div>
                         </div>
+                        <div class="column left" id="leftColumn"></div>
+                        <div class="column right" id="rightColumn"></div>
                     </div>
-                    <div class="column left" id="leftColumn"></div>
-                    <div class="column right" id="rightColumn"></div>
+                    
+                    <div class="equation-box" id="equationBox">
+                        <h3>Touch a square!</h3>
+                        <div class="equation-text">—</div>
+                    </div>
                 </div>
 
                 <div class="control-buttons" id="trainingControlButtons">
@@ -1438,6 +1485,12 @@
             state.touchedSquares = [];
             document.getElementById('trainingTableNum').textContent = state.selectedTable;
             
+            // Reset equation box to initial state
+            const equationBox = document.getElementById('equationBox');
+            equationBox.classList.remove('active');
+            equationBox.querySelector('h3').textContent = 'Touch a square!';
+            equationBox.querySelector('.equation-text').textContent = '—';
+            
             // Set dropdown to match selected table
             document.getElementById('tableDropdown').value = state.selectedTable;
             
@@ -1466,6 +1519,12 @@
             const rightCol = document.getElementById('rightColumn');
             leftCol.innerHTML = '';
             rightCol.innerHTML = '';
+            
+            // Reset equation box when rendering new columns
+            const equationBox = document.getElementById('equationBox');
+            equationBox.classList.remove('active');
+            equationBox.querySelector('h3').textContent = 'Touch a square!';
+            equationBox.querySelector('.equation-text').textContent = '—';
             
             // Calculate starting multiplier based on current level
             // Level 0: multipliers 1-10, Level 1: multipliers 11-20, etc.
@@ -1507,13 +1566,43 @@
             return square;
         }
 
+        function calculateEquation(product) {
+            // Calculate which multiplier was used to get this product
+            // product = state.selectedTable * multiplier
+            // multiplier = product / state.selectedTable
+            const multiplier = product / state.selectedTable;
+            
+            // Format as "table × multiplier = product"
+            return `${state.selectedTable} × ${multiplier} = ${product}`;
+        }
+
+        function updateEquationBox(product) {
+            const equationBox = document.getElementById('equationBox');
+            const equationText = equationBox.querySelector('.equation-text');
+            
+            // Remove active class to reset animation
+            equationBox.classList.remove('active');
+            
+            // Update text content
+            equationText.textContent = calculateEquation(product);
+            
+            // Trigger animation by adding active class (debounce with requestAnimationFrame)
+            requestAnimationFrame(() => {
+                equationBox.classList.add('active');
+            });
+        }
+
         function handleSquareTouch(square) {
             const index = parseInt(square.dataset.index);
             const side = square.dataset.side;
+            const product = parseInt(square.textContent);
             
             square.classList.add('active');
             playSound('touch');
             speak(square.textContent);
+            
+            // Update equation box with the touched square's number
+            updateEquationBox(product);
             
             setTimeout(() => {
                 square.classList.remove('active');
